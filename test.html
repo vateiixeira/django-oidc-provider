@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OIDC RP</title>
+</head>
+<body>
+    <center>
+        <h1>OpenID Connect RP Example</h1>
+        <form id="login-form">
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" name="email" required><br><br>
+            <label for="password">Senha:</label>
+            <input type="password" id="password" name="password" required><br><br>
+            <button type="submit">Login</button>
+        </form>
+    </center>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="https://www.sakimura.org/test/openidconnect.js"></script>
+
+    <script type="text/javascript">
+        $(function() {
+            var clientInfo = {
+                client_id: '793235',
+                redirect_uri: 'http://localhost:8000/openid'
+            };
+
+            OIDC.setClientInfo(clientInfo);
+
+            var providerInfo = OIDC.discover('http://localhost:8000/openid');
+
+            OIDC.setProviderInfo(providerInfo);
+            OIDC.storeInfo(providerInfo, clientInfo);
+
+            // Restore configuration information.
+            OIDC.restoreInfo();
+
+            // Get Access Token
+            var token = OIDC.getAccessToken();
+
+            // Make userinfo request using access_token.
+            if (token !== null) {
+                $.get('http://localhost:8000/openin/userinfo/?access_token=' + token, function(data) {
+                    alert('USERINFO: ' + JSON.stringify(data));
+                });
+            }
+
+            // Handle login form submission
+            $('#login-form').submit(function(event) {
+                event.preventDefault();
+                var email = $('#email').val();
+                var password = $('#password').val();
+                OIDC.login({
+                    scope: 'openid profile email',
+                    response_type: 'id_token token',
+                    login_hint: email,
+                    password: password
+                });
+            });
+        });
+    </script>
+</body>
+</html>

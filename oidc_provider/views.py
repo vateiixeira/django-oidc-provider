@@ -280,8 +280,11 @@ class ProviderInfoView(View):
         # See: http://openid.net/specs/openid-connect-core-1_0.html#SubjectIDTypes
         dic['subject_types_supported'] = ['public']
 
-        dic['token_endpoint_auth_methods_supported'] = ['client_secret_post',
-                                                        'client_secret_basic']
+        # dic['token_endpoint_auth_methods_supported'] = ['client_secret_post',
+        #                                                 'client_secret_basic']
+
+        dic['token_endpoint_auth_methods_supported'] =  ["private_key_jwt","client_secret_basic","client_secret_post","tls_client_auth","client_secret_jwt"]
+
 
         if settings.get('OIDC_SESSION_MANAGEMENT_ENABLE'):
             dic['check_session_iframe'] = site_url + reverse('oidc_provider:check-session-iframe')
